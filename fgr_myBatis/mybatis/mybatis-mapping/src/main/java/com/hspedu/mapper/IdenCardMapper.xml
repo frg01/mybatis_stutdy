@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hspedu.mapper.IdenCardMapper">
+    <!--配置根据id获取到身份证序列号-->
+    <select id="getIdenCardById" parameterType="Integer" resultType="IdenCard">
+        SELECT * FROM `idencard` WHERE `id` = #{id}
+    </select>
+</mapper>

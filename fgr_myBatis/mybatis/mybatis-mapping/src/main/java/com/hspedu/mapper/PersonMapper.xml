@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hspedu.mapper.PersonMapper">
+
+    <!--getPersonById 通过Person的id获取到Person 包括级联的IdenCard
+    自定义resultMap 搞定映射返回的结果 最终返回的是Person 只不过有级联对象
+    -->
+    <resultMap id="PersonResultMap" type="Person">
+        <!--<result property="id" column="id"/>-->
+        <!--使用id 指定id属性 可以比result多帮助提高整体性能-->
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <!--property="card" 对Person的card属性进行配置
+        javaType="IdenCard" 表示card的属性类型 对它进行对应匹配
+        -->
+        <association property="card" javaType="IdenCard">
+            <result property="id" column="id"/>
+            <result property="card_sn" column="card_sn"/>
+        </association>
+    </resultMap>
+    <select id="getPersonById" parameterType="Integer" resultMap="PersonResultMap">
+        SELECT * FROM `person`,`idencard` WHERE person.id = #{id}
+        AND `person`.card_id = `idencard`.id
+    </select>
+
+    <!--方式2 通过Person的id获取到Person 包括级联的IdenCard
+    select语句与第一个不同 先查询 返回person表 在通过返回的数据查询idencard表
+    多表联查分解成单表查询 简洁 易于维护 可以复用写好的方法
+    -->
+    <resultMap id="PersonResultMap2" type="Person">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <!--column="card_id" 是getPersonById2返回的字段
+        通过这个字段在使用getIdenCardById方法查询返回IdenCard表的信息
+        也就是card_id作为IdenCard表的id去查寻得到这条IdenCard数据
+        column="card_id" 表示返回的字段名不一定是表的字段名
+        -->
+        <association property="card" column="fgr_id" select="com.hspedu.mapper.IdenCardMapper.getIdenCardById"/>
+    </resultMap>
+    <select id="getPersonById2" parameterType="Integer" resultMap="PersonResultMap2">
+        SELECT id,`name`,card_id AS fgr_id FROM `person` WHERE person.id = #{id}
+
+    </select>
+
+</mapper>

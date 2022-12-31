@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--这时一个mapper xml 文件
+该文件可以实现对应的接口方法
+namespace 指定该xml文件和哪个接口对应
+-->
+<mapper namespace="com.hspedu.mapper.MonsterMapper">
+    <!--resultMap 表示定义一个resultMap
+    id是程序员指定的resultMap的id
+    type 是需要返回的对象类型
+    column property 表示表的字段和对象属性之间的映射关系指定
+    -->
+    <resultMap id="findMonsterByNameOrIdMap" type="Monster">
+        <result column="id" property="id"/>
+        <result column="name" property="name"/>
+    </resultMap>
+    <!--配置实现findMonsterByNameOrId-->
+    <select id="findMonsterByNameOrId" parameterType="Monster" resultType="Monster" resultMap="findMonsterByNameOrIdMap">
+        SELECT * FROM `monster` WHERE id = #{id} OR `name` = #{name}
+    </select>
+    <!--模糊查询  需要使用${value}-->
+    <select id="findMonsterByName" parameterType="String" resultType="Monster">
+        SELECT * FROM `monster` WHERE `name` LIKE "%${name}%"
+    </select>
+    <!--查询id>10 并且salary>40
+    #{id} #{salary} 表示入参map中有key为id
+    -->
+    <select id="findMonsterByIdAndSalary_ParameterHashMap" parameterType="Map" resultType="Monster">
+        SELECT * FROM `monster` WHERE `id` > #{id} AND `salary` > #{salary}
+    </select>
+    <!--返回Map-->
+    <select id="findMonsterByIdAndSalary_ReturnHashMap" parameterType="Map" resultType="Map">
+        SELECT * FROM `monster` WHERE `id` > #{id} AND `salary` > #{salary}
+    </select>
+</mapper>

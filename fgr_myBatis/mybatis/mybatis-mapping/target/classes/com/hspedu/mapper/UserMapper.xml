@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hspedu.mapper.UserMapper">
+    <resultMap id="UserResultMap" type="User">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <!--pets属性是集合  ofType="Pet"指定集合里存放的数据类型是Pet
+        collection表示属性是一个集合  column="id"user返回的id 传入查找pet的方法
+        -->
+        <collection property="pets" column="id" ofType="Pet"
+                    select="com.hspedu.mapper.PetMapper.getPetByUserId"/>
+    </resultMap>
+    <select id="getUserById" parameterType="Integer" resultMap="UserResultMap">
+        SELECT * FROM `mybatis_user` WHERE `id` = #{id}
+    </select>
+</mapper>

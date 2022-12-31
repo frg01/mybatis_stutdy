@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--这时一个mapper xml 文件
+该文件可以实现对应的接口方法
+namespace 指定该xml文件和哪个接口对应
+-->
+<mapper namespace="com.hspedu.mapper.MonsterMapper">
+    <!--查询age>10的所有妖怪，如果输入age不大于10 则返回所有妖怪
+    如果使用#{age} 在test取不出入参值 要去掉引用符号#{ }使用@param注解在接口方法上
+    -->
+    <select id="findMonsterByAge" parameterType="Integer" resultType="Monster">
+        SELECT * FROM `monster` WHERE 1 = 1
+        <if test="age >= 0">
+            AND `age` > #{age}
+        </if>
+    </select>
+
+    <!--名字为空或id<0 就不拼接sql语句或不带id的条件
+    where标签，会在组织动态sql时，加上where  mybatis会自动去掉多余的AND
+    -->
+    <select id="findMonsterByIdAndName" parameterType="Monster" resultType="Monster">
+        SELECT * FROM `monster`
+        <where>
+            <if test="id >= 0">
+                AND `id` > #{id}
+            </if>
+            <if test="name != null and name != ''">
+                AND `name` = #{name}
+            </if>
+        </where>
+    </select>
+
+    <!--测试choose标签的使用
+    name不为空，按名字查找
+    id>0 按id查找
+    否则按salary > 100查找
+    choose-when-otherwise
+    -->
+    <select id="findMonsterByIdAndName_choose" parameterType="Map" resultType="Monster">
+        SELECT * FROM `monster`
+        <choose>
+            <when test="name != null and name != ''">
+                WHERE `name` = #{name}
+            </when>
+            <when test="id > 1">
+                WHERE `id` > #{id}
+            </when>
+            <otherwise>
+                WHERE salary > 1001
+            </otherwise>
+        </choose>
+    </select>
+
+    <!--使用forEach标签  返回多个id的monster
+    map中应当有ids -{10，12，14}
+    还要判断ids是否为空 不为空使用foreach遍历
+    item="id" 遍历ids时取出的值
+    open="(" sql语句的第一个符号 separator=","多个值的分隔符
+    close=")" 后面的)
+    -->
+    <select id="findMonsterById_forEach" parameterType="Map" resultType="Monster">
+        SELECT * FROM `monster`
+        <if test="ids != null and ids !=''">
+            <where>
+                id IN
+                <foreach collection="ids" item="id" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </where>
+        </if>
+        <!--WHERE `id` IN (10,12,14)-->
+    </select>
+
+    <!--按名字查询monster 如果sql语句开头有and|or  就替换成where
+    加入where标签会加入where 同时去掉多余的AND
+    <trim prefix="WHERE" prefixOverrides="and|or|hsp"> 帮助添上WHERE 并如子句有and|or|hsp 不必要就帮助去除
+    -->
+    <select id="findMonsterByName_Trim" parameterType="Map" resultType="Monster">
+        SELECT * FROM `monster`
+        <trim prefix="WHERE" prefixOverrides="and|or|fgr">
+            <if test="name != null and name != ''">
+                fgr `name` = '松鼠++-'
+            </if>
+            <if test="age > 0">
+                AND `age` > #{age}
+            </if>
+        </trim>
+    </select>
+
+    <!--入参配合-->
+    <!--set 标签会处理多余逗号-->
+    <update id="updateMonster_set" parameterType="Map">
+        UPDATE `monster`
+        <set>
+            <if test="age != null and age != ''">
+                `age` = #{age},
+            </if>
+            <if test="email != null and email != ''">
+                `email` = #{email},
+            </if>
+            <if test="name != null and name != ''">
+                `name` = #{name},
+            </if>
+            <if test="birthday != null and birthday != ''">
+                `birthday` = #{birthday},
+            </if>
+            <if test="salary != null and salary != ''">
+                `salary` = #{salary},
+            </if>
+            <if test="gender != null and gender != ''">
+                `gender` = #{gender},
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
+</mapper>

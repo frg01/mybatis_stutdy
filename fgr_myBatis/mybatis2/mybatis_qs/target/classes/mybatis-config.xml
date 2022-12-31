@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+        <!--配置mybatis自带的日志输出  擦好看原生sql-->
+        <settings>
+        <setting name="logImpl" value="STDOUT_LOGGING"/>
+        </settings>
+
+        <!--配置别名-->
+        <typeAliases>
+        <typeAlias type="com.hspedu.entity.Monk" alias="Monk"/>
+        </typeAliases>
+
+        <environments default="development">
+        <environment id="development">
+        <!--配置时候事务管理器-->
+        <transactionManager type="JDBC"/>
+        <!--配置数据源-->
+        <dataSource type="POOLED">
+        <!--配置驱动-->
+        <property name="driver" value="com.mysql.jdbc.Driver"/>
+        <!--配置连接mysql的url
+                   jdbc:mysql协议  //127.0.0.1:3360连接mysql的ip加端口
+                   mybatis连接的DB  useSSL=true安全连接 &amp;=& 转义防止解析问题
+                   useUnicode=true 使用unicode 防止编码错误
+                   characterEncoding=UTF-8 使用utf-8 防止中文乱码
+                -->
+        <!--jdbc:mysql://127.0.0.1:3306/mybatis?useSSL=true&amp;-->
+        <!--useUnicode=true&amp;characterEncoding=UTF-8-->
+        <property name="url" value="jdbc:mysql://127.0.0.1:3306/mybatis?useSSL=true&amp;useUnicode=true&amp;characterEncoding=UTF-8"/>
+        <property name="username" value="root"/>
+        <property name="password" value="fgr"/>
+        </dataSource>
+        </environment>
+        </environments>
+        <!--这里需要配置关联的Mapper.xml
+    通过一个菜单 Path from source root
+    -->
+        <mappers>
+        <mapper resource="com/hspedu/mapper/MonkMapper.xml"/>
+        </mappers>
+</configuration>

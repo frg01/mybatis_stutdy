@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hspedu.mapper.HeroMapper">
+    <!--添加hero
+    private Integer id;
+    private String nickname;
+    private String skill;
+    private Integer rank;
+    private double salary;
+    private Date entry;
+    -->
+    <update id="addHero" parameterType="Hero">
+        INSERT INTO hero (nickname,skill,rank,salary,entry)
+        VALUES(#{nickname},#{skill},#{rank},#{salary},#{entry})
+    </update>
+
+    <select id="findHeroByRank" parameterType="Integer" resultType="Hero">
+        SELECT * FROM hero
+        <if test="rank > 0">
+            WHERE rank > 2
+        </if>
+    </select>
+
+    <!--collection="list" 默认为list 可以自己在形参设置@param-->
+    <select id="findHeroByVarRank" parameterType="Integer" resultType="Hero">
+        SELECT * FROM hero WHERE rank in
+            <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+    </select>
+
+    <update id="updateHero" parameterType="Hero" >
+        UPDATE hero
+        <set>
+            <if test="nickname != null and nickname != ''">
+                nickname = #{nickname},
+            </if>
+            <if test="skill != null and skill != ''">
+                skill = #{skill},
+            </if>
+            <if test="rank != null and rank != ''">
+                rank = #{rank},
+            </if>
+            <if test="salary != null and salary != ''">
+                salary = #{salary},
+            </if>
+            <if test="entry != null and entry != ''">
+                entry = #{entry},
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <select id="findHeroById" parameterType="Integer" resultType="Hero">
+        Select * FROM hero
+        <if test="id != null and id != ''">
+            WHERE id = #{id}
+        </if>
+    </select>
+</mapper>

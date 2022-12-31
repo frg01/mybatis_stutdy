@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--这时一个mapper xml 文件
+该文件可以实现对应的接口方法
+namespace 指定该xml文件和哪个接口对应
+-->
+<mapper namespace="com.hspedu.mapper.MonsterMapper">
+    <!--实现方法 配置addMonster
+    addMonster 接口方法名   com.hspedu.entity.Monster放入形参的类型  parameterType可以简写
+    写入sql语句
+    #{age} 从Monster对象来 对应Monster属性名
+    useGeneratedKeys="true" keyProperty="id"  主键为id 返回自增长id
+    -->
+    <insert id="addMonster" parameterType="Monster"
+            useGeneratedKeys="true" keyProperty="id"
+    >
+        INSERT INTO `monster` (`age`,`birthday`,`email`,`gender`,`name`,`salary`)
+        VALUES (#{age},#{birthday},#{email},#{gender},#{name},#{salary})
+    </insert>
+
+        <!--配置deleteMonster方法
+        java.lang.Integer  是java类型  可以简写成Integer
+        写入delete语句
+        -->
+        <delete id="deleteMonster" parameterType="java.lang.Integer">
+            DELETE FROM `monster` WHERE id = #{id};
+        </delete>
+
+        <!--配置uodateMonster
+        com.hspedu.entity.Monster 可以简写 要在mybatis-config.xml中配置<typeAliases>
+        -->
+        <update id="updateMonster" parameterType="Monster">
+            UPDATE `monster` SET `age` = #{age},`birthday`= #{birthday},`email`= #{email},
+            `gender`= #{gender},`name` = #{name},`salary` = #{salary} WHERE id = #{id}
+        </update>
+
+        <!--配置getMonsterById-->
+        <select id="getMonsterById" resultType="Monster">
+            SELECT * FROM `monster` WHERE id = #{id}
+        </select>
+
+        <!--配置/实现findAllMonster  返回集合要写集合中的类型-->
+        <select id="findAllMonster" resultType="Monster">
+            SELECT * FROM `monster`
+        </select>
+</mapper>
